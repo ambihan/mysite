@@ -1,4 +1,6 @@
 import markdown
+from markdown.extensions.toc import TocExtension
+from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 # Create your views here.
@@ -13,14 +15,16 @@ def index(request):
 
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    post.body = markdown.markdown(
-        post.body,
+    md = markdown.Markdown(
         extensions=[
             'markdown.extensions.extra',
             'markdown.extensions.codehilite',
-            'markdown.extensions.toc',
+            TocExtension(slugify=slugify),
         ]
     )
+    post.body = md.convert(post.body)
+    post.toc = md.toc
+    post.has_toc = '<li>' in post.toc
     return render(request, 'blog/detail.html', context={
         'post': post
     })
