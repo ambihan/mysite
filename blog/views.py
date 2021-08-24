@@ -60,3 +60,18 @@ def detail(request, pk):
     return render(request, 'blog/detail.html', context={
         'post': post
     })
+
+
+def about(request):
+    return render(request, 'blog/about.html')
+
+
+def contact(request):
+    return render(request, 'blog/contact.html')
+
+
+def posts(request):
+    post_list = Post.objects.all()
+    return render(request, 'blog/posts.html', context={
+        'post_list': post_list
+    })

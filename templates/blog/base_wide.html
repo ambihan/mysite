@@ -1,5 +1,4 @@
 {% load static %}
-{% load blog_extras %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,37 +93,16 @@
             </div><!-- col-md-8 -->
         </div>
     </header>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissable" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
 </div>
 
 <div class="content-body">
     <div class="container">
         <div class="row">
-            <main class="col-md-8">
+            <main class="col-md-12">
                 {% block main %}
                 {% endblock main %}
             </main>
-            <aside class="col-md-4">
-                {% block toc %}
-                {% endblock toc %}
 
-                {% show_recent_posts %}
-                {% show_archives %}
-                {% show_categories %}
-                {% show_tags %}
-                <div class="rss">
-                    <a href=""><span class="ion-social-rss-outline"></span> RSS 订阅</a>
-                </div>
-            </aside>
         </div>
     </div>
 </div>
