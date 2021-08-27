@@ -1,4 +1,4 @@
 # Project exclude paths
 /bin/python/
-
+/database/
 /.envs/
