@@ -1,0 +1,19 @@
+version: '3'
+
+volumes:
+  database_local:
+
+services:
+  mysite:
+    build:
+      context: .
+      dockerfile: ./compose/local/Dockerfile
+    image: mysite_local
+    container_name: mysite_local
+    working_dir: /app
+    volumes:
+      - database_local:/app/database
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: /start.sh
