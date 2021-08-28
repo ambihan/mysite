@@ -2,3 +2,4 @@
 /bin/python/
 /database/
 /.envs/
+_credentials.py
