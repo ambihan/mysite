@@ -11,6 +11,7 @@ urls.py
 
 from django.urls import path
 from . import views
+from .feeds import AllPostsRssFeed
 
 app_name = 'blog'
 urlpatterns = [
@@ -22,4 +23,5 @@ urlpatterns = [
     path('posts/<int:pk>/', views.PostDetailView.as_view(), name='detail'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
+    path('all/rss/', AllPostsRssFeed(), name='rss'),
 ]
