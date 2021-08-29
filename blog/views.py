@@ -1,6 +1,5 @@
 import markdown
-from markdown.extensions.toc import TocExtension
-from django.utils.text import slugify
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from pure_pagination import PaginationMixin
@@ -69,17 +68,7 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = super(PostDetailView, self).get_object(queryset=None)
-        md = markdown.Markdown(
-            extensions=[
-                'markdown.extensions.extra',
-                'markdown.extensions.codehilite',
-                TocExtension(slugify=slugify),
-            ]
-        )
-        post.body = md.convert(post.body)
-        post.toc = md.toc
         post.has_toc = '<li>' in post.toc
-
         return post
 
 
