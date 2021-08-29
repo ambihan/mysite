@@ -3,46 +3,52 @@ from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
+from pure_pagination import PaginationMixin
 from .models import Post, Category, Tag
 
 
 # Create your views here.
-class IndexView(ListView):
+class IndexView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
+    paginate_by = 10
 
 
-class PostView(ListView):
+class PostView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/posts.html'
     context_object_name = 'post_list'
+    paginate_by = 10
 
 
-class CategoryView(ListView):
+class CategoryView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
+    paginate_by = 10
 
     def get_queryset(self):
         cate = get_object_or_404(Category, pk=self.kwargs.get('pk'))
         return super(CategoryView, self).get_queryset().filter(category=cate)
 
 
-class TagView(ListView):
+class TagView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
+    paginate_by = 10
 
     def get_queryset(self):
         t = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
         return super(TagView, self).get_queryset().filter(tags=t)
 
 
-class ArchiveView(ListView):
+class ArchiveView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
+    paginate_by = 10
 
     def get_queryset(self):
         return super(ArchiveView, self).get_queryset().filter(
