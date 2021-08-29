@@ -1,4 +1,4 @@
 .*
-_credentials.py
-fabfile.py
+scripts/_credentials.py
+scripts/fabfile.py
 *.sqlite3
