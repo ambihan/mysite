@@ -24,4 +24,5 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('all/rss/', AllPostsRssFeed(), name='rss'),
+    path('search/', views.search, name='search'),
 ]

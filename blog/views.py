@@ -1,7 +1,7 @@
-import markdown
-
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
+from django.contrib import messages
+from django.db.models import Q
 from pure_pagination import PaginationMixin
 from .models import Post, Category, Tag
 
@@ -78,3 +78,16 @@ def about(request):
 
 def contact(request):
     return render(request, 'blog/contact.html')
+
+
+def search(request):
+    q = request.GET.get('q')
+    if not q:
+        err_msg = '请输入搜索关键词'
+        messages.add_message(request, messages.ERROR, err_msg, extra_tags='danger')
+        return redirect('blog:index')
+
+    post_list = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q))
+    return render(request, 'blog/index.html', context={
+        'post_list': post_list
+    })
