@@ -48,5 +48,5 @@ def deploy(c):
         remote.run(cmd, watchers=responders)
 
         # 重新启动应用
-        cmd = 'docker-compose -f production.yml up --build'
+        cmd = 'docker-compose -f production.yml up --build -d'
         remote.run(cmd)
