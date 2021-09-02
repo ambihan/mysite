@@ -9,11 +9,13 @@ urls.py
 
 """
 
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework import routers
+from . import views, rest_views
 from .feeds import AllPostsRssFeed
 
 app_name = 'blog'
+router = routers.DefaultRouter()
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('posts/', views.PostView.as_view(), name='posts'),
@@ -25,4 +27,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('all/rss/', AllPostsRssFeed(), name='rss'),
     path('search/', views.search, name='search'),
+    path('api/', include(router.urls)),
+    path('api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/index/', rest_views.index),
 ]
