@@ -8,16 +8,25 @@ rest_views.py
 ~~~~~~~~~~~~~~~~
 
 """
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
+from rest_framework import viewsets
+from rest_framework import mixins
+from .serializers import *
 
-from .models import Post
-from .serializers import PostListSerializer
 
+class PostViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    serializer_class = PostListSerializer
+    queryset = Post.objects.all()
+    pagination_class = PageNumberPagination
+    permission_classes = [AllowAny]
 
-@api_view(http_method_names=["GET"])
-def index(request):
-    post_list = Post.objects.all().order_by('-created_time')
-    serializer = PostListSerializer(post_list, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer_class_table = {
+        'list': PostListSerializer,
+        'retrieve': PostRetrieveSerializer,
+    }
+
+    def get_serializer_class(self):
+        return self.serializer_class_table.get(
+            self.action, super().get_serializer_class()
+        )

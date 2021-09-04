@@ -16,6 +16,7 @@ from .feeds import AllPostsRssFeed
 
 app_name = 'blog'
 router = routers.DefaultRouter()
+router.register(r'posts', rest_views.PostViewSet, basename='post')
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('posts/', views.PostView.as_view(), name='posts'),
@@ -29,5 +30,4 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('api/', include(router.urls)),
     path('api/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/index/', rest_views.index),
 ]
