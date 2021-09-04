@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'comments.apps.CommentsConfig',
     'pure_pagination',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

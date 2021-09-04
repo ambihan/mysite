@@ -11,12 +11,17 @@ urls.py
 
 from django.urls import path, include
 from rest_framework import routers
+from comments.rest_views import CommentViewSet
 from . import views, rest_views
 from .feeds import AllPostsRssFeed
 
 app_name = 'blog'
 router = routers.DefaultRouter()
 router.register(r'posts', rest_views.PostViewSet, basename='post')
+router.register(r'categories', rest_views.CategoryViewSet, basename='category')
+router.register(r'tags', rest_views.TagViewSet, basename='tag')
+router.register(r"comments", CommentViewSet, basename="comment")
+
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('posts/', views.PostView.as_view(), name='posts'),
