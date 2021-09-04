@@ -14,14 +14,14 @@ from .common import *
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.smoba.cn']
 
 CACHES = {
     "default": {
         "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": "redis://:UJaoRZlNrH40BDaWU6fi@redis:6379/0",
+        "LOCATION": "redis://:%s@redis:6379/0" % os.environ['REDIS_PASSWORD'],
         "OPTIONS": {
             "CONNECTION_POOL_CLASS": "redis.BlockingConnectionPool",
             "CONNECTION_POOL_CLASS_KWARGS": {"max_connections": 50, "timeout": 20},
