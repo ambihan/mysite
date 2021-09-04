@@ -16,13 +16,66 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import status
+from rest_framework_extensions.cache.decorators import cache_response
+from rest_framework_extensions.key_constructor.bits import (
+    ListSqlQueryKeyBit,
+    PaginationKeyBit,
+    RetrieveSqlQueryKeyBit,
+)
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
 
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 
+from comments.serializers import CommentSerializer
 from .serializers import *
 from .filters import PostFilter
-from comments.serializers import CommentSerializer
+from .utils import UpdatedAtKeyBit
+
+
+class PostUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "post_updated_at"
+
+
+class PostListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = PostUpdatedAtKeyBit()
+
+
+class CommentUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "comment_updated_at"
+
+
+class CommentListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = CommentUpdatedAtKeyBit()
+
+
+class CategoryUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "category_updated_at"
+
+
+class CategoryListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = CategoryUpdatedAtKeyBit()
+
+
+class TagUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "tag_updated_at"
+
+
+class TagListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = TagUpdatedAtKeyBit()
+
+
+class PostObjectKeyConstructor(DefaultKeyConstructor):
+    retrieve_sql = RetrieveSqlQueryKeyBit()
+    updated_at = PostUpdatedAtKeyBit()
 
 
 class PostViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -50,6 +103,7 @@ class PostViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
         data = [date_field.to_representation(date) for date in dates]
         return Response(data=data, status=status.HTTP_200_OK)
 
+    @cache_response(timeout=5 * 60, key_func=CommentListKeyConstructor())
     @action(
         methods=["GET"],
         detail=True,
@@ -70,14 +124,30 @@ class PostViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
         # 返回分页后的评论列表
         return self.get_paginated_response(serializer.data)
 
+    @cache_response(timeout=5 * 60, key_func=PostListKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @cache_response(timeout=5 * 60, key_func=PostObjectKeyConstructor())
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
 
 class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.annotate(num_posts=Count('post')).filter(num_posts__gt=0)
     permission_classes = [AllowAny]
 
+    @cache_response(timeout=5 * 60, key_func=CategoryListKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.annotate(num_posts=Count('post')).filter(num_posts__gt=0)
     permission_classes = [AllowAny]
+
+    @cache_response(timeout=5 * 60, key_func=TagListKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

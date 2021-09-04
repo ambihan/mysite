@@ -11,6 +11,8 @@ faker = "*"
 django-pure-pagination = "*"
 djangorestframework = "*"
 django-filter = "*"
+django-redis-cache = "*"
+drf-extensions = "*"
 
 [dev-packages]
 fabric = "*"

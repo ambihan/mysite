@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.db.models.signals import post_delete, post_save
+from django.core.cache import cache
+from datetime import datetime
 
 
 # Create your models here.
@@ -18,3 +21,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(self.name, self.text[:20])
+
+
+def change_comment_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("comment_updated_at", datetime.utcnow())
+
+
+post_save.connect(receiver=change_comment_updated_at, sender=Comment)
+post_delete.connect(receiver=change_comment_updated_at, sender=Comment)

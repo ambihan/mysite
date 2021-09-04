@@ -5,6 +5,10 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.functional import cached_property
+from django.db.models.signals import post_delete, post_save
+from django.core.cache import cache
+
+from datetime import datetime
 import markdown
 from markdown.extensions.toc import TocExtension
 
@@ -99,3 +103,25 @@ def generate_rich_content(value):
     content = md.convert(value)
     toc = md.toc
     return {"content": content, "toc": toc}
+
+
+def change_post_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("post_updated_at", datetime.utcnow())
+
+
+def change_category_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("category_updated_at", datetime.utcnow())
+
+
+def change_tag_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("tag_updated_at", datetime.utcnow())
+
+
+post_save.connect(receiver=change_post_updated_at, sender=Post)
+post_delete.connect(receiver=change_post_updated_at, sender=Post)
+
+post_save.connect(receiver=change_category_updated_at, sender=Category)
+post_delete.connect(receiver=change_category_updated_at, sender=Category)
+
+post_save.connect(receiver=change_tag_updated_at, sender=Tag)
+post_delete.connect(receiver=change_tag_updated_at, sender=Tag)
